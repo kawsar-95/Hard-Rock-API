@@ -6,12 +6,12 @@ let simpleSearchResult = document.querySelector(".simple-result");
 const displayLyrics = (song, artist, title) => {
   // alert
   if (!song.lyrics) {
-    alert(" Lyrics not found.");
+    alert(" Lyrics is not found for this song.");
     return;
   }
 
   singleLyrics.innerHTML = `
-        <button class="btn go-back" onclick = "showSongsResults()">& lsaquo;</button>
+        <button class="btn go-back" onclick = "showSongsResults()">&lsaquo;</button>
         <h2 class="text-success mb-4">${title} - ${artist} </h2>
         <pre class="lyric text-white">${song.lyrics}</pre>
     `;
@@ -23,13 +23,13 @@ const displayLyrics = (song, artist, title) => {
 
 //  lyrics of the song
 const fetchLyric = (artist, title) => {
-  fetch(`https://api.lyrics.ovh/suggest/kawsar1/${artist}/${title}`)
+  fetch(`https://api.lyrics.ovh/kawsar1/${artist}/${title}`)
     .then((response) => response.json())
     .then((json) => displayLyrics(json, artist, title))
     .catch((error) => alert(error));
 };
 
-//   simple design
+// Displays  simple design
 const simpleSongResults = (songTitle, albumTitle, artistName) => {
   const simpleSong = document.createElement("div");
   simpleSong.className = "text-center";
@@ -45,7 +45,7 @@ const simpleSongResults = (songTitle, albumTitle, artistName) => {
   simpleSearchResult.appendChild(simpleSong);
 };
 
-//   fancy design
+// Displays  fancy design
 const fancySongResults = (songTitle, albumTitle, artistName) => {
   const songInfo = document.createElement("div");
   songInfo.className = "single-result row align-items-center my-3 p-3";
@@ -74,7 +74,7 @@ const displaySongs = (song) => {
 // Handles api song info
 const handleSongs = (songs) => {
   if (!songs.data) {
-    alert("Can't Fetch Any Data");
+    alert("Can't Find Any Data");
     return;
   }
 
