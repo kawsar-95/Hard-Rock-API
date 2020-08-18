@@ -1,106 +1,84 @@
-let singleLyrics = document.querySelector(".single-lyrics");
-let fancySearchResult = document.querySelector(".search-result");
-let simpleSearchResult = document.querySelector(".simple-result");
+const searchButton = document.getElementById("search-btn");
+const searchText = document.getElementById("search-txt");
+const searchResult = document.getElementById("search-result");
+const songName = document.getElementById("song");
+const artistName = document.getElementById("artist");
+const songLyrics = document.getElementById("song-lyrics");
+const outputView = document.getElementById("output");
 
-// Displays the lyrics on the page
-const displayLyrics = (song, artist, title) => {
-  // alert
-  if (!song.lyrics) {
-    alert(" Lyrics is not found for this song.");
-    return;
+// Search button addEventListener
+searchButton.addEventListener("click", () => {
+  if (!searchText.value) {
+    const output = document.getElementById("myOutput");
+    output.style.display = "block";
+    window.onclick = function (event) {
+      if (event.target == output) {
+        output.style.display = "none";
+      }
+    };
+    outputView.innerHTML = `<h2>Please input your lyrics...</h2>`;
+  } else {
+    fetchValue(searchText.value);
   }
-
-  singleLyrics.innerHTML = `
-        <button class="btn go-back" onclick = "showSongsResults()">&lsaquo;</button>
-        <h2 class="text-success mb-4">${title} - ${artist} </h2>
-        <pre class="lyric text-white">${song.lyrics}</pre>
-    `;
-
-  simpleSearchResult.style.display = "none";
-  fancySearchResult.style.display = "none";
-  singleLyrics.style.display = "block";
-};
-
-//  lyrics of the song
-const fetchLyric = (artist, title) => {
-  fetch(`https://api.lyrics.ovh/kawsar1/${artist}/${title}`)
-    .then((response) => response.json())
-    .then((json) => displayLyrics(json, artist, title))
-    .catch((error) => alert(error));
-};
-
-// Displays  simple design
-const simpleSongResults = (songTitle, albumTitle, artistName) => {
-  const simpleSong = document.createElement("div");
-  simpleSong.className = "text-center";
-  simpleSong.innerHTML = `
-            <p class="author lead">
-                <strong>${albumTitle}</strong> Album by <span>${artistName}</span> 
-                <button onclick = "fetchLyric('${artistName}','${songTitle}')" class="btn btn-success">
-                    Get Lyrics
-                </button>
-            </p>
-    `;
-
-  simpleSearchResult.appendChild(simpleSong);
-};
-
-// Displays  fancy design
-const fancySongResults = (songTitle, albumTitle, artistName) => {
-  const songInfo = document.createElement("div");
-  songInfo.className = "single-result row align-items-center my-3 p-3";
-  songInfo.innerHTML = `
-    <div class="col-md-9" id="songInfo">
-        <h3 class="lyrics-name">${songTitle}</h3>
-        <p class="author lead">${albumTitle} Album by <span>${artistName}</span></p>
-    </div>
-    <div class="col-md-3 text-md-right text-center" id="getLyrics">
-        <button onclick = "fetchLyric('${artistName}','${songTitle}')" class="btn btn-success">Get Lyrics</button>
-    </div>`;
-
-  fancySearchResult.appendChild(songInfo);
-};
-
-// Display the songs
-const displaySongs = (song) => {
-  const songTitle = song.title;
-  const albumTitle = song.album.title;
-  const artistName = song.artist.name;
-
-  simpleSongResults(songTitle, albumTitle, artistName);
-  fancySongResults(songTitle, albumTitle, artistName);
-};
-
-// Handles api song info
-const handleSongs = (songs) => {
-  if (!songs.data) {
-    alert("Can't Find Any Data");
-    return;
-  }
-
-  simpleSearchResult.style.display = "block";
-  fancySearchResult.style.display = "block";
-
-  for (let [index, song] of songs.data.entries()) {
-    if (index == 10) {
-      break;
-    }
-    displaySongs(song);
-  }
-};
-
-// Fetch the results of the songs
-const allSongs = (songName) => {
-  fetch(`https://api.lyrics.ovh/suggest/${songName}`)
-    .then((response) => response.json())
-    .then((json) => handleSongs(json))
-    .catch((error) => alert(error));
-};
-
-//  search button
-document.getElementById("search-song").addEventListener("click", function () {
-  const songName = document.getElementById("song-name").value;
-
-  singleLyrics.style.display = "none";
-  allSongs(songName);
 });
+
+// Search text addEventListener
+searchText.addEventListener("keypress", (event) => {
+  if (event.keyCode == 13) {
+    fetchValue(searchText.value);
+  }
+});
+
+function fetchValue(search) {
+  fetch(`https://api.lyrics.ovh/suggest/${search}`)
+    .then((response) => response.json())
+    .then((data) => showData(data));
+}
+
+function showData(data) {
+  searchResult.innerHTML = `
+
+            ${data.data
+              .map(
+                (song) => `
+                        <div class="song-result row align-items-center my-3 p-3">
+                        
+                            <div class="col-md-9">
+                                <h3 class="lyrics-name song-detail">Title : ${song.title}</h3>
+                                <p class="author lead song-detail">Artist Name :<span> ${song.artist.name}</span></p>
+                                <p class="author lead song-detail">Album :<span> ${song.album.title}</span></p>
+                            </div>
+                            <div class="col-md-3 text-md-right text-center">
+                                <button data-artist="${song.artist.name}" data-songTitle="${song.title}" class="btn btn-success">Get Lyrics</button>
+                            </div>
+                        </div>
+                    `
+              )
+              .join("")}
+        `;
+}
+
+// Search result addEventListener
+searchResult.addEventListener("click", (btn) => {
+  if (btn.target.innerHTML === "Get Lyrics") {
+    const artist = btn.target.getAttribute("data-artist");
+    const songTitle = btn.target.getAttribute("data-songTitle");
+    getLyrics(artist, songTitle);
+  }
+});
+
+// Get lyrics for song
+async function getLyrics(artist, songTitle) {
+  const res = await fetch(`https://api.lyrics.ovh/v1/${artist}/${songTitle}`);
+  const data = await res.json();
+
+  const lyrics = data.lyrics;
+  const output = document.getElementById("myOutput");
+  output.style.display = "block";
+  window.onclick = function (event) {
+    if (event.target == output) {
+      output.style.display = "none";
+    }
+  };
+  outputView.innerHTML = `<h2><strong>${artist}</strong> - ${songTitle}</h2> <br/> <pre class="lyrics-text">${lyrics}</pre>`;
+}
