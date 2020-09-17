@@ -1,73 +1,145 @@
-body {
-  background-color: #13141b;
-  color: #ffffff;
-  background-image: url(images/bg-image.png);
-  background-repeat: no-repeat;
-  background-size: 100%;
-  background-position: top;
+body{
+    background-color: #13141b;
+    color: #ffffff;
+    background-image: url(images/bg-image.png);
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position: top;
+    font-family: 'Poppins', sans-serif;
 }
-.form-control {
-  background-color: rgba(255, 255, 255, 0.2);
-  padding: 22px;
-  border: none;
-  border-radius: 25px;
+
+.form-control{
+    background-color:rgba(255, 255, 255, 0.2);
+    padding: 22px;
+    border: none;
+    border-radius: 25px;
 }
-.btn {
-  border-radius: 1.5rem;
-  padding: 9px 20px;
+
+
+.btn{
+    border-radius: 1.5rem;
+    padding: 9px 20px;
 }
-.btn-previous {
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+
+.btn-privious{
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
 }
 .navbar-toggler {
-  border: none;
+    border: none;
 }
-.header-title {
-  color: #3bd96e;
-}
-.search-box {
-  position: relative;
+.search-box{
+    position: relative;
 }
 .search-btn {
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
 }
-.song-result {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 15px;
+.single-result{
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
 }
-.output {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  padding-top: 100px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgb(0, 0, 0);
-  background-color: rgba(0, 0, 0, 0.4);
+
+/*This is for Search Result Section*/
+
+.child{
+
+margin:auto;
+text-align: center;
+justify-content: center;
+background-image: linear-gradient(60deg, rgb(189, 62, 189), rgb(122, 3, 83));
+background-blend-mode: overlay;
+padding:30px 10px;
+border-radius: 15px 3px ;
+color:goldenrod;
+text-shadow: 0 0 3px black;
+font-weight: 600;
+margin-bottom: 10px;
+height:auto;
+width: 80%;
+box-shadow: 5px 10px 18px rgb(185, 133, 3);
+
+
+
+
 }
-.output-content {
-  background-color: whitesmoke;
-  color: lightskyblue;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid rgb(95, 95, 95);
-  width: 60%;
-  border-radius: 15px;
+
+.child span{
+justify-content: space-evenly;
+color: white;
+font-weight: 500;
+margin-left: 3px;
+
+
 }
-.lyrics-name {
-  margin-bottom: 20px;
+
+.search-result img{
+    box-shadow: 1px 1px 3px black;
+    margin-top: 10px;
+    border-radius: 3px;
+    transition:all 0.6s;
+    
 }
-.lyrics-text {
-  color: lightsalmon;
+
+.search-result img:hover{
+    box-shadow: 1px 1px 3px black;
+    margin-top: 10px;
+    border-radius: 3px;
+    transform:scale(1.1);
+    
 }
-.song-detail {
-  color: whitesmoke;
+
+.search-result button{
+    margin-top: 10px;
+    justify-content: space-evenly;
+    padding: 5px 10px;
+    transition:all 0.6s;
 }
+.search-result button:hover{
+    margin-top: 5px;
+    justify-content: space-evenly;
+    padding: 5px 10px;
+    transform:scale(1.1);
+}
+
+.single-lyrics> h2{
+
+color: rgb(212, 14, 212);
+
+font-size:30px;
+font-weight: 500;
+text-shadow: 0 0 3px black;
+
+}
+
+
+a{
+
+    text-decoration:none;
+    color:black;
+}
+
+a:hover{
+
+    text-decoration:none;
+    color:black;
+}
+/*This is for Search Result Section Ends Here*/
+
+
+html {
+    scroll-behavior: smooth;
+  }
+
+/*This is the text that is shown when there is no lyric*/
+  .noLyric{
+
+    font-size:16px;
+    font-weight: 600;
+    text-shadow: 0 0 3px black;
+    color:rgb(218, 12, 12);
+    font-family: 'Poppins', sans-serif;
+
+  }

@@ -1,84 +1,129 @@
-const searchButton = document.getElementById("search-btn");
-const searchText = document.getElementById("search-txt");
-const searchResult = document.getElementById("search-result");
-const songName = document.getElementById("song");
-const artistName = document.getElementById("artist");
-const songLyrics = document.getElementById("song-lyrics");
-const outputView = document.getElementById("output");
+//getting the input from the user through Search Button
+const inputValue=document.getElementById('inputValue');
+const submitButton=document.getElementById('submitButton');
 
-// Search button addEventListener
-searchButton.addEventListener("click", () => {
-  if (!searchText.value) {
-    const output = document.getElementById("myOutput");
-    output.style.display = "block";
-    window.onclick = function (event) {
-      if (event.target == output) {
-        output.style.display = "none";
-      }
-    };
-    outputView.innerHTML = `<h2>Please input your lyrics...</h2>`;
-  } else {
-    fetchValue(searchText.value);
-  }
-});
+submitButton.addEventListener('click',()=>{
+const searchResult=document.querySelector(".search-result");
+searchResult.innerHTML=``;
+const input=inputValue.value;
 
-// Search text addEventListener
-searchText.addEventListener("keypress", (event) => {
-  if (event.keyCode == 13) {
-    fetchValue(searchText.value);
-  }
-});
+//passing the parameter to make the API dynamic
+fetchData(input);
+inputValue.value='';
 
-function fetchValue(search) {
-  fetch(`https://api.lyrics.ovh/suggest/${search}`)
-    .then((response) => response.json())
-    .then((data) => showData(data));
+
+})
+
+//Fetching data from the API and user input is passed as the Parameter 
+const fetchData=async(input)=>{
+
+
+let url=`https://api.lyrics.ovh/suggest/${input}`;
+
+try{
+
+    let fetchList=await fetch(url);
+    let Res= await fetchList.json();
+    //After reading the API using json(), passing it to the Display Function
+    displayResult(Res);
+    
+
+}
+catch(error){
+    if(error) console.log("error");
+
 }
 
-function showData(data) {
-  searchResult.innerHTML = `
-
-            ${data.data
-              .map(
-                (song) => `
-                        <div class="song-result row align-items-center my-3 p-3">
-                        
-                            <div class="col-md-9">
-                                <h3 class="lyrics-name song-detail">Title : ${song.title}</h3>
-                                <p class="author lead song-detail">Artist Name :<span> ${song.artist.name}</span></p>
-                                <p class="author lead song-detail">Album :<span> ${song.album.title}</span></p>
-                            </div>
-                            <div class="col-md-3 text-md-right text-center">
-                                <button data-artist="${song.artist.name}" data-songTitle="${song.title}" class="btn btn-success">Get Lyrics</button>
-                            </div>
-                        </div>
-                    `
-              )
-              .join("")}
-        `;
 }
 
-// Search result addEventListener
-searchResult.addEventListener("click", (btn) => {
-  if (btn.target.innerHTML === "Get Lyrics") {
-    const artist = btn.target.getAttribute("data-artist");
-    const songTitle = btn.target.getAttribute("data-songTitle");
-    getLyrics(artist, songTitle);
-  }
+//Reading the values from the API and Showing it to the Screen
+const displayResult=(results)=>{
+
+
+results.data.forEach(r => {
+    const searchResult=document.querySelector(".search-result");
+    const songTitle=r.title_short;
+    const  albumTitle=r.album.title;
+const topTracks=r.artist.link;
+    
+    const artistName=r.artist.name;
+    const  image=r.artist.picture;
+    const track=r.link;
+    const albumCover=r.album.cover;
+    //This will only allow 10 elements to display as the Search Result
+    let count=searchResult.childElementCount; 
+    const card=document.createElement('li');
+    card.innerHTML=` 
+    <li class="child">Song Name:<span>${songTitle} </span>&nbsp Album:<span>${albumTitle} </span>&nbsp Artist:<span>${artistName}</span>&nbsp<span><br><img src="${image}"></span><br>
+    <span><button onclick="findText('${r.artist.name}','${r.title}')" class="btn btn-success"><a href="#mainLyric">Get Lyrics</a></button></span><br>
+<span><button onclick="NewTab('${topTracks}')" class="btn btn-warning">Artist's Top Tracks</button></span><br><span><button onclick="NewTab('${track}')" class="btn btn-danger">Play Now</button></span>
+<br><img src="${albumCover}"<br>
+<h6>Album Cover</h6>
+</li>`;
+    
+    if(count<10)searchResult.appendChild(card);
+    
 });
 
-// Get lyrics for song
-async function getLyrics(artist, songTitle) {
-  const res = await fetch(`https://api.lyrics.ovh/v1/${artist}/${songTitle}`);
-  const data = await res.json();
 
-  const lyrics = data.lyrics;
-  const output = document.getElementById("myOutput");
-  output.style.display = "block";
-  window.onclick = function (event) {
-    if (event.target == output) {
-      output.style.display = "none";
+
+}
+
+//this function get the Lyrics from the API
+const findText=async(artist, song)=>{
+
+    let url=`https://api.lyrics.ovh/v1/${artist}/${song}`;
+
+    try{
+
+        let fetchText=await fetch(url);
+        let textRes= await fetchText.json();
+        //Calling function to display Lyrics on the Screen
+        displayLyric(textRes);
+
     }
-  };
-  outputView.innerHTML = `<h2><strong>${artist}</strong> - ${songTitle}</h2> <br/> <pre class="lyrics-text">${lyrics}</pre>`;
+
+    catch(error){
+        
+        if (error) console.log("error");
+        
+        
+    }
+
+
+
+
 }
+
+//This function display the Lyrics on the Screen
+const displayLyric=(t)=>{
+const parent=document.querySelector(".single-lyrics")
+const lyric=document.querySelector(".single-lyrics pre");
+const lyricHead=document.querySelector(".single-lyrics h2");
+
+lyric.innerHTML="";
+lyricHead.innerHTML="";
+const text=t.lyrics;
+if(text!=null) {lyric.innerHTML=text;
+const headline=`${t.lyrics.slice(0,16)}...`;
+lyricHead.innerHTML=headline;}
+else {
+
+    
+const errorText=`<p class="noLyric"> Sorry!😢 This Lyric is Not Available Currently</p>`;
+lyric.innerHTML=errorText;
+
+
+}
+
+
+
+
+}
+
+
+//This function takes user to the Artist's Top Tracks COllection
+function NewTab(linkArtist) { 
+    window.open( 
+        linkArtist, "_blank"); 
+} 
